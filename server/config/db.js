@@ -1,8 +1,19 @@
 const mysql = require('mysql2/promise');
 
+function cleanUrl(url) {
+  return url.replace(/[?&]ssl-mode=[^&]*/gi, '');
+}
+
 function getConnectionConfig() {
   if (process.env.DATABASE_URL) {
-    return process.env.DATABASE_URL;
+    const url = cleanUrl(process.env.DATABASE_URL);
+    return {
+      uri: url,
+      ssl: { rejectUnauthorized: false },
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+    };
   }
 
   return {

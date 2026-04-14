@@ -1,35 +1,36 @@
 require('dotenv').config();
 const mysql = require('mysql2/promise');
 
-function getConnectionConfig() {
-  if (process.env.DATABASE_URL) {
-    return { uri: process.env.DATABASE_URL, multipleStatements: true };
-  }
-
-  return {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306'),
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : undefined,
-    multipleStatements: true,
-  };
+function cleanUrl(url) {
+  return url.replace(/[?&]ssl-mode=[^&]*/gi, '');
 }
 
 async function migrate() {
-  const config = getConnectionConfig();
-  const connection = config.uri
-    ? await mysql.createConnection(config.uri)
-    : await mysql.createConnection(config);
+  let connection;
 
-  console.log('Conectado a MySQL');
+  if (process.env.DATABASE_URL) {
+    const url = cleanUrl(process.env.DATABASE_URL);
+    connection = await mysql.createConnection({
+      uri: url,
+      ssl: { rejectUnauthorized: false },
+      multipleStatements: true,
+    });
+  } else {
+    connection = await mysql.createConnection({
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '3306'),
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : undefined,
+      multipleStatements: true,
+    });
 
-  const dbName = process.env.DB_NAME || 'todo_grupal';
-
-  if (!process.env.DATABASE_URL) {
+    const dbName = process.env.DB_NAME || 'todo_grupal';
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
     await connection.query(`USE \`${dbName}\``);
   }
+
+  console.log('Conectado a MySQL');
 
   const tables = [
     `CREATE TABLE IF NOT EXISTS users (
