@@ -31,10 +31,10 @@ export default function Sidebar({ groups, onCreateGroup }) {
       <nav className="sidebar-nav">
         <NavLink to="/" end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
           <LayoutDashboard size={18} />
-          Dashboard
+          Panel principal
         </NavLink>
 
-        <div className="sidebar-section-title">Mis Grupos</div>
+        <div className="sidebar-section-title">Mis grupos</div>
 
         {groups.map((g) => (
           <NavLink

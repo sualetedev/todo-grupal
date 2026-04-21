@@ -7,6 +7,8 @@ import Modal from '../components/Modal';
 import TaskCard from '../components/TaskCard';
 import toast from 'react-hot-toast';
 
+const ROLE_LABELS = { admin: 'Administrador', member: 'Miembro' };
+
 export default function GroupDetail({ onGroupsChanged }) {
   const { groupId } = useParams();
   const { user } = useAuth();
@@ -69,7 +71,7 @@ export default function GroupDetail({ onGroupsChanged }) {
       fetchTasks();
       onGroupsChanged();
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Error');
+      toast.error(err.response?.data?.error || 'Ha ocurrido un error');
     }
   };
 
@@ -127,7 +129,7 @@ export default function GroupDetail({ onGroupsChanged }) {
       toast.success('Miembro eliminado');
       fetchGroup();
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Error');
+      toast.error(err.response?.data?.error || 'Ha ocurrido un error');
     }
   };
 
@@ -139,7 +141,7 @@ export default function GroupDetail({ onGroupsChanged }) {
       onGroupsChanged();
       navigate('/');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Error');
+      toast.error(err.response?.data?.error || 'Ha ocurrido un error');
     }
   };
 
@@ -174,7 +176,7 @@ export default function GroupDetail({ onGroupsChanged }) {
             <Users size={16} /> Miembros ({group.members?.length})
           </button>
           {isAdmin && (
-            <button className="btn btn-secondary btn-sm" onClick={() => setShowSettingsModal(true)}>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={() => setShowSettingsModal(true)} title="Ajustes del grupo">
               <Settings size={16} />
             </button>
           )}
@@ -292,7 +294,7 @@ export default function GroupDetail({ onGroupsChanged }) {
                 <input
                   value={memberEmail}
                   onChange={(e) => setMemberEmail(e.target.value)}
-                  placeholder="Email del nuevo miembro"
+                  placeholder="Correo del nuevo miembro"
                   type="email"
                   required
                   style={{ width: '100%', padding: '10px 14px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text)', fontSize: '14px' }}
@@ -313,7 +315,7 @@ export default function GroupDetail({ onGroupsChanged }) {
                   <div className="name">{m.name}</div>
                   <div className="email">{m.email}</div>
                 </div>
-                <span className="role-badge">{m.role}</span>
+                <span className="role-badge">{ROLE_LABELS[m.role] || m.role}</span>
                 {isAdmin && m.id !== user?.id && (
                   <button className="btn btn-ghost" onClick={() => handleRemoveMember(m.id)} title="Eliminar miembro">
                     <Trash2 size={14} style={{ color: 'var(--danger)' }} />
@@ -355,7 +357,7 @@ export default function GroupDetail({ onGroupsChanged }) {
                 onGroupsChanged();
                 setShowSettingsModal(false);
               } catch (err) {
-                toast.error(err.response?.data?.error || 'Error');
+                toast.error(err.response?.data?.error || 'Ha ocurrido un error');
               }
             }}>Guardar</button>
           </div>

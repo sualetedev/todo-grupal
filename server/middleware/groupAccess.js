@@ -4,7 +4,7 @@ function groupAccess(requiredRole) {
   return async (req, res, next) => {
     const groupId = req.params.groupId || req.body.group_id;
     if (!groupId) {
-      return res.status(400).json({ error: 'group_id requerido' });
+      return res.status(400).json({ error: 'Falta el identificador del grupo' });
     }
 
     const [rows] = await db.query(
@@ -19,7 +19,7 @@ function groupAccess(requiredRole) {
     req.memberRole = rows[0].role;
 
     if (requiredRole === 'admin' && rows[0].role !== 'admin') {
-      return res.status(403).json({ error: 'Necesitas ser admin del grupo' });
+      return res.status(403).json({ error: 'Se requiere ser administrador del grupo' });
     }
 
     next();

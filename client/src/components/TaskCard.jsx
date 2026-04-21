@@ -1,4 +1,4 @@
-import { Calendar, User } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 const PRIORITY_LABELS = { high: 'Alta', medium: 'Media', low: 'Baja' };
 const STATUS_LABELS = { pending: 'Pendiente', in_progress: 'En progreso', done: 'Hecho' };

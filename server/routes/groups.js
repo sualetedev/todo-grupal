@@ -105,12 +105,12 @@ router.post('/:groupId/members', auth, groupAccess('admin'), async (req, res) =>
   try {
     const { email } = req.body;
     if (!email) {
-      return res.status(400).json({ error: 'Email del miembro requerido' });
+      return res.status(400).json({ error: 'Correo electrónico del miembro obligatorio' });
     }
 
     const [users] = await db.query('SELECT id, name, email, avatar_color FROM users WHERE email = ?', [email]);
     if (users.length === 0) {
-      return res.status(404).json({ error: 'No se encontró un usuario con ese email' });
+      return res.status(404).json({ error: 'No se encontró un usuario con ese correo electrónico' });
     }
 
     const userId = users[0].id;

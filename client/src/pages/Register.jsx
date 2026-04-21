@@ -45,12 +45,12 @@ export default function Register() {
             />
           </div>
           <div className="input-group">
-            <label>Email</label>
+            <label>Correo electrónico</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
+              placeholder="correo@ejemplo.es"
               required
             />
           </div>

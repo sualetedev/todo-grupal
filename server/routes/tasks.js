@@ -32,7 +32,7 @@ router.get('/group/:groupId', auth, groupAccess(), async (req, res) => {
       params.push(priority);
     }
 
-    query += ' ORDER BY FIELD(t.priority, "high", "medium", "low"), t.created_at DESC';
+    query += " ORDER BY FIELD(t.priority, 'high', 'medium', 'low'), t.created_at DESC";
 
     const [tasks] = await db.query(query, params);
     res.json(tasks);
@@ -145,7 +145,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
 
     if (task.created_by !== req.user.id && membership[0].role !== 'admin') {
-      return res.status(403).json({ error: 'Solo el creador o admin puede eliminar esta tarea' });
+      return res.status(403).json({ error: 'Solo el creador o el administrador del grupo pueden eliminar esta tarea' });
     }
 
     await db.query('DELETE FROM tasks WHERE id = ?', [req.params.id]);

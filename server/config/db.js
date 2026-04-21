@@ -6,7 +6,7 @@ function cleanUrl(url) {
 
 function getConnectionConfig() {
   if (process.env.DATABASE_URL) {
-    const url = cleanUrl(process.env.DATABASE_URL);
+    const url = cleanUrl(String(process.env.DATABASE_URL).trim());
     return {
       uri: url,
       ssl: { rejectUnauthorized: false },

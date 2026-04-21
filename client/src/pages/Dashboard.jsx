@@ -11,7 +11,7 @@ export default function Dashboard({ groups, onCreateGroup }) {
     <div>
       <div className="page-header">
         <div>
-          <h2>Dashboard</h2>
+          <h2>Panel principal</h2>
           <p className="page-header-sub">Resumen de tus grupos y tareas</p>
         </div>
         <button className="btn btn-primary" onClick={onCreateGroup}>
