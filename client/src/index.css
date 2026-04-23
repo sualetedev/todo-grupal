@@ -709,6 +709,65 @@ input, select, textarea {
   to { transform: rotate(360deg); }
 }
 
+/* ── Drag & Drop – columnas de estado ───────────────── */
+
+.drag-handle {
+  color: var(--text-secondary);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+  margin-top: 2px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.task-card:hover .drag-handle {
+  opacity: 0.6;
+}
+
+.drag-handle:hover {
+  opacity: 1 !important;
+  color: var(--text);
+}
+
+.task-card[draggable='true']:active {
+  opacity: 0.5;
+  border-style: dashed;
+  cursor: grabbing;
+}
+
+.task-column {
+  transition: background 0.15s, outline 0.15s;
+  border-radius: var(--radius-sm);
+  padding: 4px;
+}
+
+.task-column.column-drag-over {
+  background: rgba(99, 102, 241, 0.06);
+  outline: 2px dashed var(--primary);
+  outline-offset: -2px;
+}
+
+.drop-placeholder {
+  border: 2px dashed var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--primary);
+  opacity: 0.7;
+  margin-top: 4px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 0.7; }
+}
+
+/* ────────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   .sidebar {
     display: none;

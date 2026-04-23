@@ -21,6 +21,8 @@ export default function GroupDetail({ onGroupsChanged }) {
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [draggingTask, setDraggingTask] = useState(null);
+  const [dragOverColumn, setDragOverColumn] = useState(null);
 
   const [taskForm, setTaskForm] = useState({ title: '', description: '', priority: 'medium', assigned_to: '', due_date: '' });
   const [memberEmail, setMemberEmail] = useState('');
@@ -83,6 +85,16 @@ export default function GroupDetail({ onGroupsChanged }) {
     } catch {
       toast.error('Error al cambiar estado');
     }
+  };
+
+  const handleDropOnColumn = (e, newStatus) => {
+    e.preventDefault();
+    const taskId = parseInt(e.dataTransfer.getData('taskId'));
+    if (taskId && draggingTask?.status !== newStatus) {
+      handleStatusChange(taskId, newStatus);
+    }
+    setDraggingTask(null);
+    setDragOverColumn(null);
   };
 
   const handleDeleteTask = async (taskId) => {
@@ -196,30 +208,38 @@ export default function GroupDetail({ onGroupsChanged }) {
         </div>
       ) : (
         <div className="task-columns">
-          <div className="task-column">
-            <div className="task-column-header pending">
-              Pendiente <span className="count">{pending.length}</span>
+          {[
+            { status: 'pending',     label: 'Pendiente',   cls: 'pending',     tasks: pending },
+            { status: 'in_progress', label: 'En progreso', cls: 'in-progress', tasks: inProgress },
+            { status: 'done',        label: 'Hecho',       cls: 'done',        tasks: done },
+          ].map(({ status, label, cls, tasks: colTasks }) => (
+            <div
+              key={status}
+              className={`task-column${dragOverColumn === status ? ' column-drag-over' : ''}`}
+              onDragOver={(e) => { e.preventDefault(); setDragOverColumn(status); }}
+              onDragLeave={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) setDragOverColumn(null);
+              }}
+              onDrop={(e) => handleDropOnColumn(e, status)}
+            >
+              <div className={`task-column-header ${cls}`}>
+                {label} <span className="count">{colTasks.length}</span>
+              </div>
+              {colTasks.map((t) => (
+                <TaskCard
+                  key={t.id}
+                  task={t}
+                  onClick={openEditTask}
+                  onStatusChange={handleStatusChange}
+                  onDragStart={setDraggingTask}
+                  onDragEnd={() => { setDraggingTask(null); setDragOverColumn(null); }}
+                />
+              ))}
+              {dragOverColumn === status && draggingTask?.status !== status && (
+                <div className="drop-placeholder">Soltar aquí</div>
+              )}
             </div>
-            {pending.map((t) => (
-              <TaskCard key={t.id} task={t} onClick={openEditTask} onStatusChange={handleStatusChange} />
-            ))}
-          </div>
-          <div className="task-column">
-            <div className="task-column-header in-progress">
-              En progreso <span className="count">{inProgress.length}</span>
-            </div>
-            {inProgress.map((t) => (
-              <TaskCard key={t.id} task={t} onClick={openEditTask} onStatusChange={handleStatusChange} />
-            ))}
-          </div>
-          <div className="task-column">
-            <div className="task-column-header done">
-              Hecho <span className="count">{done.length}</span>
-            </div>
-            {done.map((t) => (
-              <TaskCard key={t.id} task={t} onClick={openEditTask} onStatusChange={handleStatusChange} />
-            ))}
-          </div>
+          ))}
         </div>
       )}
 
